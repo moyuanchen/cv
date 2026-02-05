@@ -13,3 +13,8 @@ CholeskyDecomposition<floatlike>::CholeskyDecomposition(int size) {
     this->size = size;
     this->initialize_L(size);
 }
+
+template class CholeskyDecomposition<_Float16>;
+template class CholeskyDecomposition<float>;
+template class CholeskyDecomposition<double>;
+template class CholeskyDecomposition<long double>;

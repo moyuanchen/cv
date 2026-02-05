@@ -2,15 +2,18 @@
 #define CHOLESKEY
 #include <vector>
 
+template <typename floatlike>
 class CholeskyDecomposition {
     private:
-    std::vector<std::vector<float>> L; // Lower triangular decomposition
+    int size;
+    std::vector<std::vector<floatlike>> L; // Lower triangular decomposition
+    void initialize_L(int size);
 
     public:
     CholeskyDecomposition(int size); // Initialize the class with empty matrix of fixed size
-    CholeskyDecomposition(std::vector<std::vector<float>> Cov); // Initialize the class with covariance matrix Cov
+    CholeskyDecomposition(std::vector<std::vector<floatlike>> Cov); // Initialize the class with covariance matrix Cov
 
-    void decompose(std::vector<std::vector<float>> Cov); // Decompose Cov to L where Cov = LL^T
-    std::vector<std::vector<float>> get_L(); // return the fitted L value
+    void decompose(std::vector<std::vector<floatlike>> Cov); // Decompose Cov to L where Cov = LL^T
+    std::vector<std::vector<floatlike>> get_L(); // return the fitted L value
 };
 #endif

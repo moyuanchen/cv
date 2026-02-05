@@ -31,9 +31,20 @@ void CholeskyDecomposition<floatlike>::setCov(std::vector<std::vector<floatlike>
 }
 
 template <typename floatlike>
+void CholeskyDecomposition<floatlike>::updateCov(std::vector<std::vector<floatlike>> Cov) {
+    this->setCov(Cov);
+    this->decompose();
+}
+
+template <typename floatlike>
 void CholeskyDecomposition<floatlike>::decompose(std::vector<std::vector<floatlike>> Cov) {
     this->setCov(Cov);
     this->decompose();
+}
+
+template <typename floatlike>
+void CholeskyDecomposition<floatlike>::decompose() {
+    // cooking
 }
 
 template class CholeskyDecomposition<_Float16>;

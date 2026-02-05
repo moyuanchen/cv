@@ -15,6 +15,7 @@ class CholeskyDecomposition {
     CholeskyDecomposition(std::vector<std::vector<floatlike>> Cov); // Initialize the class with covariance matrix Cov
 
     void setCov(std::vector<std::vector<floatlike>> Cov); // set the cov matrix
+    void updateCov(std::vector<std::vector<floatlike>> Cov); // update the cov matrix and decompose
 
     void decompose();
     void decompose(std::vector<std::vector<floatlike>> Cov); // Decompose Cov to L where Cov = LL^T

@@ -16,4 +16,9 @@ class CholeskyDecomposition {
     void decompose(std::vector<std::vector<floatlike>> Cov); // Decompose Cov to L where Cov = LL^T
     std::vector<std::vector<floatlike>> get_L(); // return the fitted L value
 };
+
+using Cholesky16 = CholeskyDecomposition<_Float16>;
+using Cholesky32 = CholeskyDecomposition<float>;
+using Cholesky64 = CholeskyDecomposition<double>;
+using Cholesky128 = CholeskyDecomposition<long double>;
 #endif

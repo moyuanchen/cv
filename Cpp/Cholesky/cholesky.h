@@ -1,29 +1,60 @@
-#ifndef CHOLESKEY
-#define CHOLESKEY
+#ifndef CHOLESKY_H // Standard naming convention
+#define CHOLESKY_H
+
 #include <vector>
+#include <cmath>
+#include <stdexcept>
 
-template <typename floatlike>
+template <typename T>
 class CholeskyDecomposition {
-    private:
-    int size;
-    std::vector<std::vector<floatlike>> Cov;
-    std::vector<std::vector<floatlike>> L; // Lower triangular decomposition
-    void initialize_L(int size);
+private:
+    int n;
+    // FLATTENED MATRIX: Size is n * n. 
+    // Access element (i, j) via data[i * n + j]
+    std::vector<T> L; 
 
-    public:
-    CholeskyDecomposition(int size); // Initialize the class with empty matrix of fixed size
-    CholeskyDecomposition(std::vector<std::vector<floatlike>> Cov); // Initialize the class with covariance matrix Cov
+public:
+    explicit CholeskyDecomposition(int size) : n(size), L(size * size, 0.0) {}
 
-    void setCov(std::vector<std::vector<floatlike>> Cov); // set the cov matrix
-    void updateCov(std::vector<std::vector<floatlike>> Cov); // update the cov matrix and decompose
+    // 1. Pass by CONST REFERENCE to avoid copying
+    // 2. Use a flat vector input for performance
+    void decompose(const std::vector<T>& matrix_flat) {
+        if (matrix_flat.size() != n * n) {
+            throw std::invalid_argument("Matrix dimensions do not match.");
+        }
 
-    void decompose();
-    void decompose(std::vector<std::vector<floatlike>> Cov); // Decompose Cov to L where Cov = LL^T
-    std::vector<std::vector<floatlike>> get_L(); // return the fitted L value
+        // Reset L to zero before starting
+        std::fill(L.begin(), L.end(), 0.0);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j <= i; j++) {
+                T sum = 0;
+                
+                // Cache-friendly inner loop (contiguous memory access)
+                for (int k = 0; k < j; k++) {
+                    sum += L[i * n + k] * L[j * n + k];
+                }
+
+                if (i == j) {
+                    // Diagonal Element
+                    T val = matrix_flat[i * n + i] - sum;
+                    if (val <= 0) throw std::runtime_error("Matrix is not Positive Definite");
+                    L[i * n + j] = std::sqrt(val);
+                } else {
+                    // Off-Diagonal Element
+                    L[i * n + j] = (1.0 / L[j * n + j]) * (matrix_flat[i * n + j] - sum);
+                }
+            }
+        }
+    }
+
+    // Return by CONST REFERENCE to allow read-access without copying
+    const std::vector<T>& get_L() const {
+        return L;
+    }
 };
 
-using Cholesky16 = CholeskyDecomposition<_Float16>;
 using Cholesky32 = CholeskyDecomposition<float>;
 using Cholesky64 = CholeskyDecomposition<double>;
-using Cholesky128 = CholeskyDecomposition<long double>;
+
 #endif

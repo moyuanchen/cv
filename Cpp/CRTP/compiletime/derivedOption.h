@@ -10,7 +10,7 @@ class CallOption : public BaseOption<CallOption> {
 
     friend class BaseOption<CallOption>; // Make BaseOption a friend class so it can access
 
-    float priceOption() const {
+    __attribute__((noinline)) float priceOption() const {
         float d1 = (log(spot/strike) + (r + (vol * vol) / 2) * tau)/(vol * sqrt(tau));
         float d2 = d1 - vol * sqrt(tau);
         return spot * cdf(d1) - strike * exp(-r * tau) * cdf(d2);
@@ -30,7 +30,7 @@ class PutOption : public BaseOption<PutOption> {
 
     friend class BaseOption<PutOption>; // Make BaseOption a friend class so it can access
 
-    float priceOption() const {
+    __attribute__((noinline)) float priceOption() const {
         float d1 = (log(spot/strike) + (r + (vol * vol) / 2) * tau)/(vol * sqrt(tau));
         float d2 = d1 - vol * sqrt(tau);
         return -spot * cdf(-d1) + strike * exp(-r * tau) * cdf(-d2);

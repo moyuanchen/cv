@@ -22,8 +22,6 @@ class VCallOption : public VBaseOption {
 class VPutOption : public VBaseOption {
     private:
     float r, spot, strike, tau, vol;
-    float p;
-
 
     public:
     VPutOption(float r_, float spot_, float strike_, float tau_, float vol_)

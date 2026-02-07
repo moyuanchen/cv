@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 #include <chrono>
+#include <variant>
 
 #include "util.h"
 #include "baseOption.h"
@@ -20,10 +21,13 @@ int main() {
     int N = 1000000;
 
     // CRTP instantiation
-    std::vector<CallOption> callOptionPortfolio;
-    callOptionPortfolio.reserve(N);
-    std::vector<PutOption>  putOptionPortfolio;
-    putOptionPortfolio.reserve(N);
+    using Option = std::variant<CallOption, PutOption>;
+    std::vector<Option> portfolio;
+    portfolio.reserve(2 * N);
+    // std::vector<CallOption> callOptionPortfolio;
+    // callOptionPortfolio.reserve(N);
+    // std::vector<PutOption>  putOptionPortfolio;
+    // putOptionPortfolio.reserve(N);
 
     // Virtual instantiation
     std::vector<VBaseOption*> vOptionPortfolio;
@@ -36,8 +40,8 @@ int main() {
         float tau = tauDist(gen);
         float vol = volDist(gen);
 
-        callOptionPortfolio.emplace_back(r, spot, strike, tau, vol);
-        putOptionPortfolio.emplace_back(r, spot, strike, tau, vol);
+        portfolio.emplace_back(CallOption(r, spot, strike, tau, vol));
+        portfolio.emplace_back(PutOption(r, spot, strike, tau, vol));
 
         vOptionPortfolio.push_back(new VCallOption(r, spot, strike, tau, vol));
         vOptionPortfolio.push_back(new VPutOption(r, spot, strike, tau, vol));
@@ -46,12 +50,15 @@ int main() {
     // CRTP calls
     float totalCRTP = 0;
     auto start = std::chrono::high_resolution_clock::now();
-    for (auto &option : callOptionPortfolio) {
-        totalCRTP += option.price();
+    for (auto &opt: portfolio) {
+        totalCRTP += std::visit([](auto &o) {return o.price(); }, opt);
     }
-    for (auto &option: putOptionPortfolio) {
-        totalCRTP += option.price();
-    }
+    // for (auto &option : callOptionPortfolio) {
+    //     totalCRTP += option.price();
+    // }
+    // for (auto &option: putOptionPortfolio) {
+    //     totalCRTP += option.price();
+    // }
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end-start);
     

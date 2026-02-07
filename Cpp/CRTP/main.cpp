@@ -71,19 +71,5 @@ int main() {
     
     std::cout << "Virtual pricing of " << 2 * N << " options took " << duration.count() << " microseconds" << std::endl;
     std::cout << "Portfolio Value: " << totalVirtual << std::endl;
-        // CRTP calls
-    totalCRTP = 0;
-    start = std::chrono::high_resolution_clock::now();
-    for (auto &option : callOptionPortfolio) {
-        totalCRTP += option.price();
-    }
-    for (auto &option: putOptionPortfolio) {
-        totalCRTP += option.price();
-    }
-    end = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::microseconds>(end-start);
-    
-    std::cout << "CRTP pricing of " << 2 * N << " options took " << duration.count() << " microseconds" << std::endl;
-    std::cout << "Portfolio Value: " << totalCRTP << std::endl;
     return 0;
 }
